@@ -2,7 +2,10 @@
   <div id="app">
      <my-header></my-header>
      <tab></tab>
-    <router-view/>
+     <keep-alive>
+      <!-- 切换页面不重新获取ajax -->
+       <router-view/>
+     </keep-alive>
   </div>
 </template>
 
