@@ -10,7 +10,26 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/apis': {
+        // 测试环境
+        target: 'https://c.y.qq.com/',  // 接口域名
+        changeOrigin: true,  //是否跨域
+        secure: false, //https协议才设置
+        pathRewrite: {  
+            '^/apis': ''   //需要rewrite重写的,
+        }              
+      },
+      '/apispc': {
+        // 测试环境
+        target: 'https://u.y.qq.com/',  // 接口域名
+        changeOrigin: true,  //是否跨域
+        secure: false, //https协议才设置
+        pathRewrite: {
+            '^/apispc': ''   //需要rewrite重写的,
+        }              
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
