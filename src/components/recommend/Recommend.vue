@@ -14,15 +14,15 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="item in songList" :key="item.id" class="item">
+            <li v-for="(item, index) in songList" :key="index" class="item">
               <div class="icon">
-                <img v-lazy="item.picUrl">
-                <span class="count"><i class="fa fa-headphones" aria-hidden="true"></i>{{item.accessnum}}</span>
+                <img v-lazy="item.cover_url_medium">
+                <span class="count"><i class="fa fa-headphones" aria-hidden="true"></i>{{item.access_num}}</span>
                 <span class="play"><i class="fa fa-play-circle-o" aria-hidden="true"></i></span>
               </div>
               <div class="text">
-                <p class="desc" v-html="item.songListDesc"></p>
-                <h2 class="name" v-html="item.songListAuthor"></h2>
+                <p class="desc" v-html="item.title"></p>
+                <h2 class="name" v-html="item.creator_info.nick"></h2>
               </div>
             </li>
           </ul>
@@ -39,7 +39,7 @@
 import Loading from 'base/loading/Loading'
 import Scroll from 'base/scroll/Scroll'
 import Slider from 'base/slider/Slider'
-import { getRecommend } from 'api/recommend'
+import { getRecommend, getDiscList, getPcRecommend } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 export default {
   name: 'recommend-box',
@@ -56,7 +56,8 @@ export default {
   },
   created () {
     this._getRecommend()
-    // this._getDiscList()
+    this._getDiscList()
+    this._getPcRecommend()
   },
   methods: {
     loadImage () {
@@ -69,18 +70,23 @@ export default {
       getRecommend().then((res) => {
         if (res.data.code === ERR_OK) {
           this.recommends = res.data.data.slider
-          this.songList = res.data.data.songList
+          // this.songList = res.data.data.songList
+        }
+      })
+    },
+    _getDiscList () {
+      getDiscList().then((res) => {
+        console.log(res)
+      })
+    },
+    _getPcRecommend () {
+      getPcRecommend().then((res) => {
+        if (res.code === ERR_OK) {
+          // console.log(res)
+          this.songList = res.playlist.data.v_playlist
         }
       })
     }
-    // _getDiscList () {
-    //   getRecommend().then((res) => {
-    //     if (res.data.code === ERR_OK) {
-    //       this.songList = res.data.data.songList
-    //       console.log(this.songList)
-    //     }
-    //   })
-    // }
   }
 }
 
