@@ -1,10 +1,10 @@
 <template>
   <scroll class="listview-box" :data="data" ref="listview" :listenScroll="listenScroll" :probeType="probeType" @scroll="scroll">
     <ul>
-      <li v-for="group in data" class="list-group" :key="group.title" ref="listGroup">
+      <li  v-for="group in data" class="list-group" :key="group.title" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="item in group.items" :key="item.name" class="list-group-item">
+          <li @click="selectItem(item)" v-for="item in group.items" :key="item.name" class="list-group-item">
             <img v-lazy="item.avatar" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
@@ -107,6 +107,9 @@ export default {
     }
   },
   methods: {
+    selectItem (item) {
+      this.$emit('select', item)
+    },
     onShortcutTouchSart (e) {
       let anchorIndex = getData(e.target, 'index')
       let firstTouch = e.touches[0]
