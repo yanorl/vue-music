@@ -15,7 +15,7 @@
         <div class="middle">
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="cdCls">
                 <img class="image" :src="curentSong.image">
               </div>
             </div>
@@ -37,19 +37,19 @@
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i></i>
+              <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon"></i>
+              <i class="icon icon-not-favorite"></i>
             </div>
           </div>
         </div>
@@ -58,41 +58,82 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img  width="40" height="40" :src="curentSong.image">
+          <img :class="cdCls" width="40" height="40" :src="curentSong.image">
         </div>
         <div class="text">
           <h2 class="name" v-html="curentSong.name"></h2>
           <p class="desc" v-html="curentSong.singer"></p>
         </div>
         <div class="control">
+          <i :class="minIcon" @click.stop="togglePlaying"></i>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="singer_url"></audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex'
+import { getPlayUrl } from 'api/playUrl'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
+import { ERR_OK } from 'api/config'
 const transform = prefixStyle('transform')
 export default {
   name: 'player-box',
   data () {
     return {
+      singer_url: ''
     }
   },
   computed: {
+    cdCls () {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    minIcon () {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
-      'curentSong'
+      'curentSong',
+      'playing'
     ])
   },
+  watch: {
+    curentSong () {
+      // console.log(this.curentSong.mid)
+      this._getPlayUrl()
+    },
+    playing (newPlaying) {
+      const audio = this.$refs.audio
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause()
+      })
+    }
+  },
   methods: {
+    togglePlaying () {
+      this.setPlayingState(!this.playing)
+    },
+    _getPlayUrl () {
+      getPlayUrl(this.curentSong.mid).then((res) => {
+        if (res.code === ERR_OK) {
+          console.log(res.req_0.data.midurlinfo[0].purl)
+          this.singer_url = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
+          this.$nextTick(() => {
+            this.$refs.audio.play()
+          })
+        }
+      })
+    },
     back () {
       this.setFullScreen(false)
     },
@@ -152,7 +193,8 @@ export default {
       }
     },
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
   }
 }
