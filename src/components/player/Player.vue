@@ -72,16 +72,14 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="singer_url"></audio>
+    <audio ref="audio" :src="curentSong.url"></audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex'
-import { getPlayUrl } from 'api/playUrl'
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
-import { ERR_OK } from 'api/config'
 const transform = prefixStyle('transform')
 export default {
   name: 'player-box',
@@ -109,8 +107,9 @@ export default {
   },
   watch: {
     curentSong () {
-      // console.log(this.curentSong.mid)
-      this._getPlayUrl()
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
     },
     playing (newPlaying) {
       const audio = this.$refs.audio
@@ -122,17 +121,6 @@ export default {
   methods: {
     togglePlaying () {
       this.setPlayingState(!this.playing)
-    },
-    _getPlayUrl () {
-      getPlayUrl(this.curentSong.mid).then((res) => {
-        if (res.code === ERR_OK) {
-          console.log(res.req_0.data.midurlinfo[0].purl)
-          this.singer_url = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
-          this.$nextTick(() => {
-            this.$refs.audio.play()
-          })
-        }
-      })
     },
     back () {
       this.setFullScreen(false)

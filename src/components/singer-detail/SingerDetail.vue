@@ -7,6 +7,7 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from 'api/singer'
+import { getPlayUrl } from 'api/playUrl'
 import { ERR_OK } from 'api/config'
 import { createSong } from 'common/js/song'
 import MusicList from 'components/music-list/MusicList'
@@ -29,7 +30,6 @@ export default {
     ])
   },
   created () {
-    // console.log(this.singer)
     this._getDetail()
   },
   methods: {
@@ -42,7 +42,7 @@ export default {
         if (res.code === ERR_OK) {
           // console.log(res.data.list)
           this.songs = this._normalizeSongs(res.data.list)
-          // console.log(this.songs)
+          console.log(this.songs)
         }
       })
     },
@@ -51,7 +51,12 @@ export default {
       list.forEach((item) => {
         let { musicData } = item
         if (musicData.songid && musicData.albummid) {
-          ret.push(createSong(musicData))
+          getPlayUrl(musicData.songmid).then((res) => {
+            if (res.code === ERR_OK) {
+              const songLink = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
+              ret.push(createSong(musicData, songLink))
+            }
+          })
         }
       })
       return ret
