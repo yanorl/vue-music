@@ -125,6 +125,9 @@ export default {
       this._scrollTo(anchorIndex)
       // console.log(anchorIndex)
     },
+    refresh () {
+      this.$refs.listview.refresh()
+    },
     scroll (pos) {
       this.scrollY = pos.y
     },

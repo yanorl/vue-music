@@ -41,8 +41,11 @@ import Scroll from 'base/scroll/Scroll'
 import Slider from 'base/slider/Slider'
 import { getRecommend, getDiscList, getPcRecommend } from 'api/recommend'
 import { ERR_OK } from 'api/config'
+import { playlistMixin } from 'common/js/mixin'
+
 export default {
   name: 'recommend-box',
+  mixins: [playlistMixin],
   data () {
     return {
       recommends: [],
@@ -60,6 +63,11 @@ export default {
     this._getPcRecommend()
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
     loadImage () {
       if (!this.checkloaded) {
         this.checkloaded = true

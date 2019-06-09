@@ -67,7 +67,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
               console.log(e)
           })
       }),
-       app.get('/api/getPcRecommend', function(req, res) {    //
+      app.get('/api/getPcRecommend', function(req, res) {    //
           var url = 'https://u.y.qq.com/cgi-bin/musicu.fcg' // 原api  
           axios.get(url, {
               headers: {
@@ -81,8 +81,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
               console.log(e)
           })
       }),
-        app.get('/api/getUrl', function(req, res) {    //
+      app.get('/api/getUrl', function(req, res) {    //
           var url = 'https://u.y.qq.com/cgi-bin/musicu.fcg' // 原api  
+          axios.get(url, {
+              headers: {
+                  referer: 'https://y.qq.com/portal/player.html',
+                  origin: 'https://y.qq.com'               //访问的域名
+              },
+              params: req.query                //req.query我打印过是url的data参数
+          }).then((response) => {
+              res.json(response.data)            //发送一个JSON响应
+          }).catch((e) => {
+              console.log(e)
+          })
+      }),
+      app.get('/api/lyric', function(req, res) {    //
+          var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg' // 原api  
           axios.get(url, {
               headers: {
                   referer: 'https://y.qq.com/portal/player.html',
