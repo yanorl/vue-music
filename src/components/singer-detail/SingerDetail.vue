@@ -7,7 +7,7 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from 'api/singer'
-import { getPlayUrl } from 'api/playUrl'
+// import { getPlayUrl } from 'api/playUrl'
 import { ERR_OK } from 'api/config'
 import { createSong } from 'common/js/song'
 import MusicList from 'components/music-list/MusicList'
@@ -15,7 +15,8 @@ export default {
   name: 'singerDetail-box',
   data () {
     return {
-      songs: []
+      songs: [],
+      canPlaying: []
     }
   },
   computed: {
@@ -41,25 +42,32 @@ export default {
       getSingerDetail(this.singer.id).then((res) => {
         if (res.code === ERR_OK) {
           // console.log(res.data.list)
-          this.songs = this._normalizeSongs(res.data.list)
+          this.noPay(res.data.list)
+          this.songs = this._normalizeSongs(this.canPlaying)
           // console.log(this.songs)
         }
       })
+    },
+    noPay (list) {
+      this.canPlaying = list.filter((item) => {
+        return item.musicData.pay.payplay !== 1
+      })
+      // console.log(_list)
     },
     _normalizeSongs (list) {
       let ret = []
       list.forEach((item) => {
         let { musicData } = item
         if (musicData.songid && musicData.albummid) {
-          let _songmid = musicData.songmid
-          getPlayUrl(_songmid).then((res) => {
-            if (res.code === ERR_OK) {
-              // console.log(res.req_0.data.midurlinfo[0])
-              let songLink = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
-              ret.push(createSong(musicData, songLink))
-            }
-          })
-          // ret.push(createSong(musicData))
+          // let _songmid = musicData.songmid
+          // getPlayUrl(_songmid).then((res) => {
+          //   if (res.code === ERR_OK) {
+          //     // console.log(res.req_0.data.midurlinfo[0])
+          //     let songLink = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
+          //     ret.push(createSong(musicData, songLink))
+          //   }
+          // })
+          ret.push(createSong(musicData))
         }
       })
       return ret
