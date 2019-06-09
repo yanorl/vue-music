@@ -51,10 +51,11 @@ export default {
       list.forEach((item) => {
         let { musicData } = item
         if (musicData.songid && musicData.albummid) {
-          getPlayUrl(musicData.songmid).then((res) => {
+          let _songmid = musicData.songmid
+          getPlayUrl(_songmid).then((res) => {
             if (res.code === ERR_OK) {
               // console.log(res.req_0.data.midurlinfo[0])
-              const songLink = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
+              let songLink = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
               ret.push(createSong(musicData, songLink))
             }
           })
