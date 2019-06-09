@@ -82,7 +82,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended='end'></audio>
+    <audio ref="audio" :src="playingUrl" @canplay="ready" @error="error" @timeupdate="updateTime" @ended='end'></audio>
   </div>
 </template>
 
@@ -108,7 +108,8 @@ export default {
       currentLyric: null,
       currentLineNum: 0,
       currentShow: 'cd',
-      playingLyric: ''
+      playingLyric: '',
+      playingUrl: ''
     }
   },
   computed: {
@@ -142,6 +143,7 @@ export default {
   },
   watch: {
     currentSong (newSong, oldSong) {
+      this.getPlayUrls()
       if (newSong.id === oldSong.id) {
         return
       }
@@ -149,8 +151,10 @@ export default {
         this.currentLyric.stop()
       }
       setTimeout(() => {
-        this.$refs.audio.play()
-        this.getLyric()
+        if (this.playingUrl) {
+          this.$refs.audio.play()
+          this.getLyric()
+        }
       }, 1000)
       // this.$nextTick(() => {
       //   this.$refs.audio.play()
@@ -160,7 +164,9 @@ export default {
     playing (newPlaying) {
       const audio = this.$refs.audio
       this.$nextTick(() => {
-        newPlaying ? audio.play() : audio.pause()
+        if (this.playingUrl) {
+          newPlaying ? audio.play() : audio.pause()
+        }
       })
     }
   },
@@ -177,7 +183,7 @@ export default {
     },
     end () {
       if (this.mode === playMode.loop) {
-        this.loop()()
+        this.loop()
       } else {
         this.next()
       }
@@ -186,16 +192,20 @@ export default {
       if (!this.songReady) {
         return
       }
-      if (this.playlist.length === 1) {
+      if (this.mode === playMode.loop) {
         this.loop()
       } else {
-        let index = this.currentIndex + 1
-        if (index === this.playlist.length) {
-          index = 0
-        }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlaying()
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex + 1
+          if (index === this.playlist.length) {
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlaying()
+          }
         }
       }
       this.songReady = false
@@ -204,16 +214,20 @@ export default {
       if (!this.songReady) {
         return
       }
-      if (this.playlist.length === 1) {
+      if (this.mode === playMode.loop) {
         this.loop()
       } else {
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.playlist.length - 1
-        }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlaying()
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex - 1
+          if (index === -1) {
+            index = this.playlist.length - 1
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlaying()
+          }
         }
       }
       this.songReady = false
@@ -285,6 +299,12 @@ export default {
       const minute = interval / 60 | 0
       const second = this._pad(interval % 60)
       return `${minute}:${second}`
+    },
+    getPlayUrls () {
+      this.currentSong.getPlayUrl().then((res) => {
+        this.playingUrl = res
+        // console.log(res)
+      })
     },
     getLyric () {
       this.currentSong.getLyric().then((lyric) => {

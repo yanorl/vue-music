@@ -1,4 +1,5 @@
 import { getLyric } from 'api/songlyric'
+import { getPlayUrl } from 'api/playUrl'
 import { ERR_OK } from 'api/config'
 import { Base64 } from 'js-base64'
 export default class Song {
@@ -28,9 +29,25 @@ export default class Song {
       })
     })
   }
+
+  getPlayUrl () {
+    if (this.playUrl) {
+      return Promise.resolve(this.playUrl)
+    }
+    return new Promise((resolve, reject) => {
+      getPlayUrl(this.mid).then((res) => {
+        if (res.code === ERR_OK) {
+          this.playUrl = `http://dl.stream.qqmusic.qq.com/${res.req_0.data.midurlinfo[0].purl}`
+          resolve(this.playUrl)
+        } else {
+          reject(new Error('no playing url'))
+        }
+      })
+    })
+  }
 }
 
-export function createSong (musicData, songLink) {
+export function createSong (musicData /* , songLink */) {
   return new Song({
     id: musicData.songid,
     mid: musicData.songmid,
@@ -38,8 +55,8 @@ export function createSong (musicData, songLink) {
     name: musicData.songname,
     album: musicData.albumname,
     duration: musicData.interval,
-    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: songLink
+    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`
+    // url: songLink
   })
 }
 
