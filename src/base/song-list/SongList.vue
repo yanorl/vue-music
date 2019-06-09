@@ -22,7 +22,7 @@ export default {
     },
     rank: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   methods: {
@@ -60,9 +60,11 @@ export default {
       height: 64px
       font-size: $font-size-medium
       .rank
-        flex: 0 0 25px
-        width: 25px
-        margin-right: 30px
+        flex: 0 0 30px
+        width: 30px
+        height: 30px
+        line-height: 30px
+        margin-right: 20px
         text-align: center
         .icon
           display: inline-block
@@ -78,6 +80,11 @@ export default {
         .text
           color: $color-theme
           font-size: $font-size-large
+          border-radius: 50%;
+          border: 1px solid #fff;
+          display: block;
+          height: 30px;
+          width: 30px;
       .content
         flex: 1
         line-height: 20px
