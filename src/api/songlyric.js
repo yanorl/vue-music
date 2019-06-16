@@ -5,7 +5,7 @@ export function getLyric (mid) {
   const url = '/api/lyric'
   const data = Object.assign({}, commonParams, {
     songmid: mid,
-    pcachetime: +new Date(),
+    pcachetime: +new Date(), // new Date().getTime()
     platform: 'yqq.json',
     hostUin: 0,
     needNewCode: 0,

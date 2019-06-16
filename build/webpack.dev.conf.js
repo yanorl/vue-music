@@ -108,6 +108,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           }).catch((e) => {
               console.log(e)
           })
+      }),
+      app.get('/api/songList', function(req, res) {    //
+          var url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg' // 原api  
+          axios.get(url, {
+              headers: {
+                  referer: 'https://y.qq.com/n/yqq/playsquare/',
+                  origin: 'https://y.qq.com'               //访问的域名
+              },
+              params: req.query                //req.query我打印过是url的data参数
+          }).then((response) => {
+              res.json(response.data)            //发送一个JSON响应
+          }).catch((e) => {
+              console.log(e)
+          })
       })
     }
   },
