@@ -234,7 +234,6 @@ export default {
     },
     ready () {
       this.songReady = true
-      console.log(this.currentSong)
     },
     error () {
       this.songReady = true
