@@ -122,6 +122,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           }).catch((e) => {
               console.log(e)
           })
+      }),
+      app.get('/api/getMusicList', function(req, res) {    //
+          var url = 'https://u.y.qq.com/cgi-bin/musicu.fcg' // 原api  
+          axios.get(url, {
+              headers: {
+                  referer: 'https://y.qq.com/n/yqq/toplist/',
+                  origin: 'https://y.qq.com'               //访问的域名
+              },
+              params: req.query                //req.query我打印过是url的data参数
+          }).then((response) => {
+              res.json(response.data)            //发送一个JSON响应
+          }).catch((e) => {
+              console.log(e)
+          })
       })
     }
   },

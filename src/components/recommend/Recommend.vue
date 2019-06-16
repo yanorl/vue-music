@@ -83,8 +83,8 @@ export default {
     },
     _getRecommend () {
       getRecommend().then((res) => {
-        if (res.data.code === ERR_OK) {
-          this.recommends = res.data.data.slider
+        if (res.code === ERR_OK) {
+          this.recommends = res.data.slider
           // this.songList = res.data.data.songList
         }
       })
