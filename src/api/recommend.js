@@ -9,6 +9,7 @@
 //   })
 //   return jsonp(url, data, options)
 // }
+// import jsonp from 'common/js/jsonp'
 import axios from 'axios'
 import OriginAxios from 'common/js/axios'
 import { commonParams } from './config'
@@ -61,6 +62,28 @@ export function getDiscList () {
     hostUin: 0,
     needNewCode: 0,
     data: { 'comm': { 'ct': 24, 'cv': 0 }, 'singerList': { 'module': 'Music.SingerListServer', 'method': 'get_singer_list', 'param': { 'area': -100, 'sex': -100, 'genre': -100, 'index': -100, 'sin': 0, 'cur_page': 1 } } }
+  })
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+export function getSongList (disstid) {
+  const url = '/api/songList'
+  const data = Object.assign({}, commonParams, {
+    type: 1,
+    json: 1,
+    utf8: 1,
+    onlysong: 0,
+    new_format: 1,
+    disstid,
+    g_tk: 1703603265,
+    hostUin: 0,
+    notice: 0,
+    platform: 'yqq.json',
+    needNewCode: 0
   })
   return axios.get(url, {
     params: data

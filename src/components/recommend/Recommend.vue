@@ -14,7 +14,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="(item, index) in songList" :key="index" class="item">
+            <li @click="selectItem(item)" v-for="(item, index) in songList" :key="index" class="item">
               <div class="icon">
                 <img v-lazy="item.cover_url_medium">
                 <span class="count"><i class="fa fa-headphones" aria-hidden="true"></i>{{item.access_num}}</span>
@@ -31,6 +31,7 @@
       <div class="loading-container" v-show="!songList.length">
         <loading></loading>
       </div>
+      <router-view></router-view>
     </scroll>
   </div>
 </template>
@@ -42,7 +43,7 @@ import Slider from 'base/slider/Slider'
 import { getRecommend, getDiscList, getPcRecommend } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 import { playlistMixin } from 'common/js/mixin'
-
+import { mapMutations } from 'vuex'
 export default {
   name: 'recommend-box',
   mixins: [playlistMixin],
@@ -68,6 +69,12 @@ export default {
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.tid}`
+      })
+      this.setDisc(item)
+    },
     loadImage () {
       if (!this.checkloaded) {
         this.checkloaded = true
@@ -84,7 +91,7 @@ export default {
     },
     _getDiscList () {
       getDiscList().then((res) => {
-        console.log(res)
+        // console.log(res)
       })
     },
     _getPcRecommend () {
@@ -92,9 +99,13 @@ export default {
         if (res.code === ERR_OK) {
           // console.log(res)
           this.songList = res.playlist.data.v_playlist
+          // console.log(this.songList)
         }
       })
-    }
+    },
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   }
 }
 
