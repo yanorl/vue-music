@@ -15,8 +15,7 @@ export default {
   name: 'disc-box',
   data () {
     return {
-      songs: [],
-      canPlaying: []
+      songs: []
     }
   },
   computed: {
@@ -48,14 +47,12 @@ export default {
       })
     },
     noPay (list) {
-      this.canPlaying = list.filter((item) => {
+      return list.filter((item) => {
         return item.pay.pay_play !== 1
       })
-      // console.log(_list)
     },
     _normalizeSongs (musicData) {
-      this.noPay(musicData.songlist)
-      let list = this.canPlaying
+      let list = this.noPay(musicData.songlist)
       let songid = musicData.songids
       let ret = []
       let arrSongid = []
