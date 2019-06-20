@@ -11,7 +11,7 @@
             </span>
           </h1>
         </div>
-        <scroll ref="listContent" class="list-content" :data="sequenceList">
+        <scroll :refreshDelay="refreshDelay" ref="listContent" class="list-content" :data="sequenceList">
           <transition-group name="list" tag="ul">
             <li ref="listItem" class="item" v-for="(item, index) in sequenceList" :key="item.id" @click="selectItem(item, index)">
               <i class="current" :class="getCurrentIcon(item)"></i>
@@ -26,7 +26,7 @@
           </transition-group>
         </scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="addSong">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到列表</span>
           </div>
@@ -36,6 +36,7 @@
         </div>
       </div>
       <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+      <add-song ref="addsong"></add-song>
     </div>
   </transition>
 </template>
@@ -46,17 +47,20 @@ import Scroll from 'base/scroll/Scroll'
 import { playMode } from 'common/js/config'
 import Confirm from 'base/confirm/Confirm'
 import { playerMixin } from 'common/js/mixin'
+import AddSong from 'components/add-song/AddSong'
 
 export default {
   data () {
     return {
-      showFlag: false
+      showFlag: false,
+      refreshDelay: 100
     }
   },
   mixins: [playerMixin],
   components: {
     Scroll,
-    Confirm
+    Confirm,
+    AddSong
   },
   watch: {
     currentSong (newSong, oldSong) {
@@ -68,9 +72,9 @@ export default {
     }
   },
   computed: {
-  	modeText () {
-  	  return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '循环播放'
-  	}
+    modeText () {
+      return this.mode === playMode.sequence ? '顺序播放' : this.mode === playMode.random ? '随机播放' : '循环播放'
+    }
   },
   methods: {
     show () {
@@ -117,6 +121,9 @@ export default {
     confirmClear () {
       this.deleteSongList()
       this.hide()
+    },
+    addSong () {
+      this.$refs.addsong.show()
     },
     ...mapActions([
       'deleteSong',
