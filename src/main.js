@@ -8,6 +8,12 @@ import VueLazyLoad from 'vue-lazyload'
 import 'common/stylus/index.styl'
 import 'font-awesome/css/font-awesome.min.css'
 
+import Vconsole from 'vconsole'
+const vConsole = new Vconsole()
+Vue.use(vConsole)
+
+console.log('foo')
+
 fastclick.attach(document.body)
 
 Vue.config.productionTip = false
